@@ -10,8 +10,10 @@ fn ocamllib_dir() -> std::path::PathBuf {
         "-c",
         "ocamlopt.opt -config | grep standard_library: | awk '{ print $2 }'",
     ]);
-    let output = sh.output().unwrap().stdout;
-    let proposed_path = std::path::Path::new(std::str::from_utf8(&output).unwrap().trim());
+    let bytes = sh.output().unwrap().stdout;
+    let str_output = std::str::from_utf8(&bytes).unwrap().trim();
+    println!("Proposed path output: {}", str_output);
+    let proposed_path = std::path::Path::new(str_output);
     // A supercaml 'ocamlopt.opt' can report standard library paths that don't
     // exist.
     if proposed_path.exists() {
@@ -21,8 +23,10 @@ fn ocamllib_dir() -> std::path::PathBuf {
         // 'ocamlopt.opt' itself it.
         let mut sh = std::process::Command::new("sh");
         sh.args(["-c", "which ocamlopt.opt"]);
-        let output = sh.output().unwrap().stdout;
-        std::path::Path::new(std::str::from_utf8(&output).unwrap().trim())
+        let bytes = sh.output().unwrap().stdout;
+        let str_output = std::str::from_utf8(&bytes).unwrap().trim();
+        println!("Output: {}", str_output);
+        std::path::Path::new(str_output)
             .ancestors()
             .nth(2)
             .unwrap()
