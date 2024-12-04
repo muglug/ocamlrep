@@ -6,6 +6,18 @@
 // | awk '{ print $2 }')`.
 fn ocamllib_dir() -> std::path::PathBuf {
     let mut sh = std::process::Command::new("sh");
+    sh.args(["-c", "pwd"]);
+    let bytes = sh.output().unwrap().stdout;
+    let str_output = std::str::from_utf8(&bytes).unwrap().trim();
+    println!("Current directory: {}", str_output);
+
+    let mut sh = std::process::Command::new("sh");
+    sh.args(["-c", "opam --version"]);
+    let bytes = sh.output().unwrap().stdout;
+    let str_output = std::str::from_utf8(&bytes).unwrap().trim();
+    println!("Opam version {}", str_output);
+
+    let mut sh = std::process::Command::new("sh");
     sh.args([
         "-c",
         "ocamlopt.opt -config | grep standard_library: | awk '{ print $2 }'",
